@@ -28,14 +28,14 @@ def check_wall(maze, pos):
 
 # Main definitions
 def read_file(level, file_name):
-    f = open("../../INPUT/" + level + '/' + file_name, "r")
+    f = open('../../INPUT/' + level + '/' + file_name, 'r')
 
-    maze_size = tuple(map(int, f.readline().split(" ")))
+    maze_size = tuple(map(int, f.readline().split(' ')))
 
     width, height = maze_size
-    maze = [[int(attr) for attr in f.readline().split(" ")] for _ in range(height)]
+    maze = [[int(attr) for attr in f.readline().split(' ')] for _ in range(height)]
 
-    spawnpoint = tuple(map(int, f.readline().split(" ")))
+    spawnpoint = tuple(map(int, f.readline().split(' ')))
 
     f.close()
 
