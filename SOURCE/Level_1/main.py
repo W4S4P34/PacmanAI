@@ -1,5 +1,6 @@
 import handle_input as handlein
 from path_finding import A_star
+import time
 
 
 if __name__ == "__main__":
@@ -11,7 +12,11 @@ if __name__ == "__main__":
     adjacent_nodes, food = handlein.handle_adjacent(maze, maze_size)
 
     # Find food
-    path = A_star(maze, adjacent_nodes, spawnpoint, food)
+    timer_start = time.perf_counter()
+    path, score = A_star(maze, adjacent_nodes, spawnpoint, food)
+    timer_end = time.perf_counter()
     print(path)
+    print("Total score: " + score)
+    print(f"Time for Pacman to get to the food: {timer_end - timer_start} seconds")
 
     input()

@@ -21,10 +21,13 @@ def backtracking(current, parent_list):
 
 # Main definitions
 def A_star(maze, adjacent_nodes, spawnpoint, food):
+    # Score: Get all node that Pacman visited (include visited node)
+
     frontier = []
     explored = []
     parent_nodes = {}
     cost = 0
+    score = 0
 
     start_node = (cost + manhattan_distance(spawnpoint, food), spawnpoint)
     parent_nodes[spawnpoint] = None
@@ -42,11 +45,11 @@ def A_star(maze, adjacent_nodes, spawnpoint, food):
             return None
         else:
             # Pop from the queue head
-            tmp_tuple = heappop(frontier)  # tmp_tuple is a tuple which contains pair of cost and node popped out of the queue (cost, Node)
+            tmp_tuple = heappop(frontier)  # tmp_tuple is a tuple which contains pair of cost and node popped out of the queue (cost, Node).
             current_node = tmp_tuple[1]
             cost = tmp_tuple[0] - manhattan_distance(current_node, food)
 
-            # Check whether current node is explored or not
+            # Check whether current node is explored or not.
             for explored_node in explored:
                 if(current_node == explored_node):
                     continue
@@ -54,14 +57,15 @@ def A_star(maze, adjacent_nodes, spawnpoint, food):
             # Add to explored nodes list
             explored.append(current_node)
 
-            # STOP if find the food and backtrack the path
+            # STOP if find the food and backtrack the path.
             if current_node == food:
+                score += 20
                 # Time to end?
 
                 # Limitation of time?
 
                 final_path = backtracking(current_node, parent_nodes)
-                return final_path[::-1]
+                return final_path[::-1], (score - (len(final_path) - 2))  # Pacman spawn and Food does not count.
 
             # Expand the way from current node/ Add to frontier
             for adjacent in adjacent_nodes[current_node]:
