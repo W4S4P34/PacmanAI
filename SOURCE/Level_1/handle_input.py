@@ -16,9 +16,19 @@ def find_adjacent(maze, pos):
     return adjacent_list
 
 
+def check_food(maze, pos):
+    row_idx, col_idx = pos
+    return maze[row_idx][col_idx] == 2
+
+
+def check_wall(maze, pos):
+    row_idx, col_idx = pos
+    return maze[row_idx][col_idx] == 1
+
+
 # Main definitions
-def read_file(file_name):
-    f = open("../../INPUT/" + file_name, "r")
+def read_file(level, file_name):
+    f = open("../../INPUT/" + level + '/' + file_name, "r")
 
     maze_size = tuple(map(int, f.readline().split(" ")))
 
@@ -39,9 +49,12 @@ def handle_adjacent(maze, size):
 
     for row_idx in range(height):
         for col_idx in range(width):
-            if maze[row_idx][col_idx] == 1:
+            current_pos = (row_idx, col_idx)
+            if check_wall(maze, current_pos):
                 continue
             else:
+                if check_food(maze, current_pos):  # In this level, there only one food
+                    food = (row_idx, col_idx)  # Food's position
                 adjacent_nodes[(row_idx, col_idx)] = find_adjacent(maze, (row_idx, col_idx))
 
-    return adjacent_nodes
+    return adjacent_nodes, food

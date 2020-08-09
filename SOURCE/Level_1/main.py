@@ -1,19 +1,17 @@
 import handle_input as handlein
+from path_finding import A_star
 
 
 if __name__ == "__main__":
-    file_name = "Pacman_map_lv1_1.txt"
+    level = "Level_1"
+    file_name = "Map-1.txt"
 
-    maze_size, maze, spawnpoint = handlein.read_file(file_name)
-    print(maze_size)
-    for row in maze:
-        for ele in row:
-            print(ele, end=' ')
-        print()
-    print(spawnpoint)
+    maze_size, maze, spawnpoint = handlein.read_file(level, file_name)
 
-    adjacent_nodes = handlein.handle_adjacent(maze, maze_size)
-    for k, v in adjacent_nodes.items():
-        print("K:", k, "V:", v)
+    adjacent_nodes, food = handlein.handle_adjacent(maze, maze_size)
+
+    # Find food
+    path = A_star(maze, adjacent_nodes, spawnpoint, food)
+    print(path)
 
     input()
