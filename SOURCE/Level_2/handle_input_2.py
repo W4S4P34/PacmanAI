@@ -4,13 +4,15 @@ def find_adjacent(maze, pos):
 
     adjacent_list = []
 
-    if maze[row_idx - 1][col_idx] != 1 and maze[row_idx - 1][col_idx] != 3:
+    obstacles = [1, 3]
+
+    if maze[row_idx - 1][col_idx] not in obstacles:
         adjacent_list.append((row_idx - 1, col_idx))
-    if maze[row_idx + 1][col_idx] != 1 and maze[row_idx + 1][col_idx] != 3:
+    if maze[row_idx + 1][col_idx] not in obstacles:
         adjacent_list.append((row_idx + 1, col_idx))
-    if maze[row_idx][col_idx - 1] != 1 and maze[row_idx][col_idx - 1] != 3:
+    if maze[row_idx][col_idx - 1] not in obstacles:
         adjacent_list.append((row_idx, col_idx - 1))
-    if maze[row_idx][col_idx + 1] != 1 and maze[row_idx][col_idx + 1] != 3:
+    if maze[row_idx][col_idx + 1] not in obstacles:
         adjacent_list.append((row_idx, col_idx + 1))
 
     return adjacent_list
@@ -19,7 +21,6 @@ def find_adjacent(maze, pos):
 def check_food(maze, pos):
     row_idx, col_idx = pos
     return maze[row_idx][col_idx] == 2
-
 
 def check_wall(maze, pos):
     row_idx, col_idx = pos
@@ -54,9 +55,7 @@ def handle_adjacent(maze, size):
     for row_idx in range(height):
         for col_idx in range(width):
             current_pos = (row_idx, col_idx)
-            if check_wall(maze, current_pos):
-                continue
-            else if check_monster(maze, current_pos):
+            if check_wall(maze, current_pos) or check_monster(maze, current_pos):
                 continue
             else:
                 if check_food(maze, current_pos):  # In this level, there only one food
