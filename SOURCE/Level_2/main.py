@@ -1,5 +1,5 @@
-import handle_input_2 as handlein2
-from path_finding_2 import A_star
+import handle_input as handlein
+from path_finding import A_star
 
 
 if __name__ == '__main__':
