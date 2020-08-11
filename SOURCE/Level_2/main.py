@@ -4,11 +4,11 @@ from path_finding import A_star
 
 if __name__ == '__main__':
     level = 'Level_2'
-    file_name = 'Map-1.txt'
+    file_name = 'Map-3.txt'
 
-    maze_size, maze, spawnpoint = handlein2.read_file(level, file_name)
+    maze_size, maze, spawnpoint = handlein.read_file(level, file_name)
 
-    adjacent_nodes, food = handlein2.handle_adjacent(maze, maze_size)
+    adjacent_nodes, food = handlein.handle_adjacent(maze, maze_size)
 
     # Find food
     path = A_star(maze, adjacent_nodes, spawnpoint, food)
