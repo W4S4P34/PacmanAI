@@ -33,7 +33,7 @@ def check_wall(maze, pos):
 def read_file(level, file_name):
     path = os.getcwd()
 
-    fullpath = os.path.join(path, 'INPUT/Level_1', file_name)
+    fullpath = os.path.join(path, 'INPUT', level, file_name)
     f = open(fullpath, 'r')
 
     maze_size = tuple(map(int, f.readline().split(' ')))

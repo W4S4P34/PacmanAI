@@ -2,8 +2,8 @@ import handle_input as handlein
 import os
 
 # Gameplay setting
-LEVEL = 'Level_1'
-FILENAME = 'Map-1.txt'
+LEVEL = 'Level_2'
+FILENAME = 'Map-3.txt'
 
 os.chdir('../../')
 PATH = os.getcwd()
