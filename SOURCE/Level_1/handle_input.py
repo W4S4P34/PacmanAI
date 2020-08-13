@@ -1,3 +1,6 @@
+import os
+
+
 # Support definitions
 def find_adjacent(maze, pos):
     row_idx, col_idx = pos
@@ -28,7 +31,10 @@ def check_wall(maze, pos):
 
 # Main definitions
 def read_file(level, file_name):
-    f = open('../../INPUT/' + level + '/' + file_name, 'r')
+    path = os.getcwd()
+
+    fullpath = os.path.join(path, 'INPUT/Level_1', file_name)
+    f = open(fullpath, 'r')
 
     maze_size = tuple(map(int, f.readline().split(' ')))
 
