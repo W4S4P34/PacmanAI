@@ -1,23 +1,29 @@
-import handle_input as handlein
-import os
+# Game states
+INTRO = 'intro'
+SETTINGS = 'settings'
+MAPSELECT = 'mapselecting'
+PLAYING = 'playing'
+WINNING = 'winning'
+GAMEOVER = 'gameover'
 
-# Gameplay setting
-LEVEL = 'Level_2'
-FILENAME = 'Map-3.txt'
+# Level gameplay
+INP = 'INPUT'
+LVL1 = 'Level_1'
+LVL2 = 'Level_2'
+MAP1 = 'Map-1.txt'
+MAP2 = 'Map-2.txt'
+MAP3 = 'Map-3.txt'
 
-os.chdir('../../')
-PATH = os.getcwd()
-
-# Screen settings
-(WIDTH, HEIGHT), _, _ = handlein.read_file(LEVEL, FILENAME)
-WIDTH *= 32
-HEIGHT *= 32
-
-# Player settings
-
-# Monsters settings
-
+# Map renders
 # ASSET settings
+# Background
+MISC_TYPE = 'Miscellaneous'
+BG = 'background.jpg'
+LVLBG = 'pacman-level-select.png'
+ICO = 'pixel-pac-man.png'
+BUTTONBG = 'button-background.png'
+MAPBG = 'map-background.png'
+
 # Character settings and flags
 CHARACTER_TYPE = 'Character'
 MAIN_CHARACTER = 'pacman_02.png'

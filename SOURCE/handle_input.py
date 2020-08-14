@@ -1,7 +1,33 @@
+import game_settings as settings
+import pygame as pg
 import os
 
 
 # Support definitions
+def load_image(type, name):
+    """ Load image and return image object """
+    fullname = os.path.join(settings.PATH, 'ASSET', type, name)
+    try:
+        image = pg.image.load(fullname)
+        if image.get_alpha() is None:
+            image = image.convert()
+        else:
+            image = image.convert_alpha()
+    except pg.error as message:
+        print('Cannot load image:', fullname)
+        raise SystemExit(message)
+    return image, image.get_rect()
+
+
+# Directly load and render image to Surface
+def render_img(surf, type, image, pos):
+    x_coor, y_coor = pos
+    on_bg_pos = (x_coor * 32, y_coor * 32)
+    cell_image, cell_rect = load_image(type, image)
+    cell_rect = cell_rect.move(tuple(reversed(on_bg_pos)))
+    surf.blit(cell_image, cell_rect)
+
+
 def find_adjacent(maze, pos):
     row_idx, col_idx = pos
 
@@ -31,9 +57,7 @@ def check_wall(maze, pos):
 
 # Main definitions
 def read_file(level, file_name):
-    path = os.getcwd()
-
-    fullpath = os.path.join(path, 'INPUT', level, file_name)
+    fullpath = os.path.join(settings.PATH, 'INPUT', level, file_name)
     f = open(fullpath, 'r')
 
     maze_size = tuple(map(int, f.readline().split(' ')))
