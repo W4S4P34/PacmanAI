@@ -84,11 +84,11 @@ def read_file(file_name, matrix):
     f.close()
     return true_size
 
-def add_adjacent(matrix, weight, height):
-    dict = {}
+def add_adjacent(matrix, width, height):
+    adjacent = {}
 
     for i in range(1, height - 1):
-        for j in range(1, weight - 1):
+        for j in range(1, width - 1):
             temp = []
             if matrix[i][j] == 1:
                 continue
@@ -100,11 +100,32 @@ def add_adjacent(matrix, weight, height):
                 temp.append((i, j - 1))
             if matrix[i][j + 1] != 1:
                 temp.append((i, j + 1))
-            dict[(i, j)] = temp
+            adjacent[(i, j)] = temp
 
-    return dict
+    return adjacent
 
-def lv3(matrix, dict, spawn, width, height):
+def get_monsters_location(matrix, width, height):
+    monsters_location = {}
+    i = 0
+    for row in range(1, height - 1):
+        for col in range(1, width - 1):
+            if matrix[row][col] == 3:
+                monsters_location[i] = [row,col]
+                i += 1
+    return monsters_location
+
+def lv3(matrix, adjacent, monsters_location, spawn, width, height):
+
+    step_move = [               
+		    [0, -1],            # Trái
+		    [0, 0],             # Phải
+		    [1, 0],             # Xuống
+		    [0, 0],             # Lên
+		    [0, 1],             # Phải
+		    [0, 0],             # Trái
+		    [-1, 0],            # Lên
+		    [0, 0]              # Xuống
+                ]    
 
     i = spawn[0]    #Lưu spawn thành 2 điểm
     j = spawn[1]
@@ -115,12 +136,12 @@ def lv3(matrix, dict, spawn, width, height):
 
     score = 0   #Điểm ban đầu là 0
 
-    #Tạo list các key và list các values của dictionary
+    #Tạo list các key và list các values của adjacentionary
     keys = []
-    for k in dict.keys():
+    for k in adjacent.keys():
         keys.append(k)
     values = []
-    for k in dict.values():
+    for k in adjacent.values():
         for o in k:
             values.append(o)
 
@@ -135,7 +156,7 @@ def lv3(matrix, dict, spawn, width, height):
     total = 0   #total dùng để giới hạn thời gian đi trong map của pacman
     for n in range(0, height):
         for m in range(0, width):
-            for key, value in dict.items():
+            for key, value in adjacent.items():
                 if n == key[0] and m == key[1]:
                     step[n][m] = sum(1 for v in value if v)
             total += step[n][m]
@@ -152,8 +173,19 @@ def lv3(matrix, dict, spawn, width, height):
     pre_position = (i, j)
     
     count_2_step = 0
-    
+    monsters_path = {}               # Lưu đường đi của từng monster với key là thứ tự và value là list đường đi
+    monsters_step = 0    
     for each_node_step in range(total):
+        for each_monster, each_location in monsters_location.items():
+            next_location = [sum(x) for x in zip(each_location, step_move[monsters_step])]
+            if matrix[next_location[0]][next_location[1]] == 1:
+                continue
+            each_location = next_location
+            monsters_path[each_monster] = each_location
+        monsters_step += 1
+        if(monsters_step == 8):
+           monsters_step = 0    
+        
         if matrix[i][j] == 2:   #Check xem chạm thức ăn chưa, nếu rồi thì thức ăn biến mất, xóa path và reset have_2
             score += 20
             matrix[i][j] = 0
@@ -173,7 +205,7 @@ def lv3(matrix, dict, spawn, width, height):
         for k in list_zone:
             path = []
             if matrix[k[0]][k[1]] == 2:
-                path = A_star(matrix, dict, (i, j), (k[0], k[1]))
+                path = A_star(matrix, adjacent, (i, j), (k[0], k[1]))
                 if len(pre_path) < len(path) and len(pre_path) != 0:
                     continue
                 have_2 = True
@@ -223,19 +255,19 @@ def lv3(matrix, dict, spawn, width, height):
     print((i, j))
     return score
 
-file_name = "D:\Learning Stuff\AI\Project Pacman\Pacman_map_lv1_1.txt"
+file_name = "C:/Users/ASUS/Documents/HCMUS/2nd/S3/AI/Bài tập/Proj/Pacman Map/Pacman_map_lv2_3.txt"
 
 size = []
 matrix = []
 
 size = read_file(file_name, matrix)
 
-weight = int(size[0][0])
+width = int(size[0][0])
 height = int(size[0][1])
 
 spawn = matrix.pop()
 
-dict = add_adjacent(matrix, weight, height)
-
-score = lv3(matrix, dict, spawn, weight, height)
+adjacent = add_adjacent(matrix, width, height)
+monsters_location = get_monsters_location(matrix, width, height)
+score = lv3(matrix, adjacent, monsters_location, spawn, width, height)
 print(score)

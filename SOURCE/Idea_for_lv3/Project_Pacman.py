@@ -84,11 +84,11 @@ def read_file(file_name, matrix):
     f.close()
     return true_size
 
-def add_adjacent(matrix, weight, height):
-    dict = {}
+def add_adjacent(matrix, width, height):
+    adjacent = {}
 
     for i in range(1, height - 1):
-        for j in range(1, weight - 1):
+        for j in range(1, width - 1):
             temp = []
             if matrix[i][j] == 1:
                 continue
@@ -100,12 +100,31 @@ def add_adjacent(matrix, weight, height):
                 temp.append((i, j - 1))
             if matrix[i][j + 1] != 1:
                 temp.append((i, j + 1))
-            dict[(i, j)] = temp
+            adjacent[(i, j)] = temp
 
-    return dict
-
-def lv3(matrix, dict, spawn, width, height):
-
+    return adjacent
+def get_monsters_location(matrix, width, height):
+    monsters_location = {}
+    i = 0
+    for row in range(1, height - 1):
+        for col in range(1, width - 1):
+            if matrix[row][col] == 3:
+                monsters_location[i] = [row,col]
+                i += 1
+    return monsters_location
+def lv3(matrix, dict, monsters_location, spawn, width, height):
+    
+    step_move = [               
+		    [0, -1],            # Trái
+		    [0, 0],             # Phải
+		    [1, 0],             # Xuống
+		    [0, 0],             # Lên
+		    [0, 1],             # Phải
+		    [0, 0],             # Trái
+		    [-1, 0],            # Lên
+		    [0, 0]              # Xuống
+                ]
+    
     i = spawn[0]    #Lưu spawn thành 2 điểm
     j = spawn[1]
 
@@ -117,10 +136,10 @@ def lv3(matrix, dict, spawn, width, height):
 
     #Tạo list các key và list các values của dictionary
     keys = []
-    for k in dict.keys():
+    for k in adjacent.keys():
         keys.append(k)
     values = []
-    for k in dict.values():
+    for k in adjacent.values():
         for o in k:
             values.append(o)
 
@@ -132,7 +151,7 @@ def lv3(matrix, dict, spawn, width, height):
             temp.append(0)
         step.append(temp)
 
-    total = 0   #total dùng để giới hạn thời gian đi trong map của pacman
+    total = 0   #total dùng để giới hạn thời gian đi trong map của pacman <-- Này đéo hiểu 
     for n in range(0, height):
         for m in range(0, width):
             for key, value in dict.items():
@@ -140,30 +159,34 @@ def lv3(matrix, dict, spawn, width, height):
                     step[n][m] = sum(1 for v in value if v)
             total += step[n][m]
 
-    number_adj_list = []
-    number_adj_list = step
-
     step[i][j] -= 1 #Điểm spawn giảm sẫn 1 bước đi
 
     pre_path = []   #path này dùng để lưu đường đi khi có thức ăn
     have_2 = False  #Check xem đã thấy thức ăn chưa, nếu đẵ thấy thức ăn thì đi theo path, chi đổi hướng khi thấy thức ăn khác gần hơn
 
-    
-    pre_position = (i, j)
-    
-    count_2_step = 0
-    
-    for each_node_step in range(total):
+    monsters_path = {}               # Lưu đường đi của từng monster với key là thứ tự và value là list đường đi
+    print(monsters_location)
+    monsters_step = 0
+    for each_node_step in range(total):         # Mỗi turn 4 con quái sẽ di chuyển 1 lần theo thứ tự nêu phía trên
+        for each_monster, each_location in monsters_location.items():
+            next_location = [sum(x) for x in zip(each_location, step_move[monsters_step])]
+            if matrix[next_location[0]][next_location[1]] == 1:
+                continue
+            each_location = next_location
+            monsters_path[each_monster] = each_location
+        monsters_step += 1
+        if(monsters_step == 8):
+           monsters_step = 0
+        
         if matrix[i][j] == 2:   #Check xem chạm thức ăn chưa, nếu rồi thì thức ăn biến mất, xóa path và reset have_2
             score += 20
             matrix[i][j] = 0
             pre_path.clear()
             have_2 = False
-            count_2_step = 0
 
         list_zone = []  #Tạo zone, vùng nhìn thấy của pacman, các elements trong zone là tuple tọa độ của caca1 node
-        for n in range(-4, 4):
-            for m in range(-4, 4):
+        for n in range(-3, 3):
+            for m in range(-3, 3):
                 if i + n < 0 or j + m < 0 or i + n >= height or j + m >= width:
                     continue
                 if matrix[i + n][j + m] != 1 and matrix[i + n][j + m] != 3:
@@ -178,64 +201,59 @@ def lv3(matrix, dict, spawn, width, height):
                     continue
                 have_2 = True
                 pre_path = path
-                tuple = pre_path.pop(0)
-                step[tuple[0]][tuple[1]] += 1
 
 
         
         if have_2 == True:  #Đi theo path khi có thức ăn
-            tuple = pre_path.pop(0)
-            count_2_step += 1
+            tuple = pre_path.pop(1)
             i = tuple[0]
-            j = tuple[1]            
-            if count_2_step > 1:
-                step[i][j] -= 1
+            j = tuple[1]
+            step[i][j] -= 1
             score -= 1
             continue
         else:   #Tìm đường theo một thừ tự nhất định khi không có thức ăn trong zone theo thứ tự node là phải, dưới, trên, trái
-            for key in keys:
+            for key in keys:    
                 if (i, j) == key:
-                    if (i, j + 1) in values and step[i][j + 1] > 0 and (i, j + 1) != pre_position:
+                    if (i, j + 1) in values and step[i][j + 1] > 0:
                         step[i][j + 1] -= 1
-                        pre_position = (i, j)
                         j += 1
                         score -= 1
                         break
-                    if (i + 1, j) in values and step[i + 1][j] > 0  and (i + 1, j) != pre_position:
+                    if (i + 1, j) in values and step[i + 1][j] > 0:
                         step[i + 1][j] -= 1
-                        pre_position = (i, j)
                         i += 1
+                        if step[i][j] == 1 and (i, j - 1) in values and (i + 1, j + 1) not in values and (i - 1, j + 1) not in values and (i - 1, j - 1) not in values and (i + 1, j - 1) not in values:
+                                step[i][j] -= 1
+                                step[i][j - 1] -= 1
                         score -= 1
                         break
                     if (i - 1, j) in values and step[i - 1][j] > 0:
                         step[i - 1][j] -= 1
-                        pre_position = (i, j)
                         i -= 1                                                             
                         score -= 1
                         break
                     if (i, j - 1) in values and step[i][j - 1] > 0:
                         step[i][j - 1] -= 1
-                        pre_position = (i, j)
                         j -= 1
+                        if  step[i][j] > 1 and (i, j - 1) in values and (i, j + 1) in values and (i + 1, j) not in values and (i - 1, j) not in values:
+                            step[i][j] -= 1
                         score -= 1
                         break
-                #Còn trục trặc khi pacman đi lùi, nếu các thức ăn quá xa nhau có thể sẽ k thấy, cần fix
-    print((i, j))
+                #Còn trục trặc khi pacman đi lùi, nếu các thức ăn quá xa nhau có thể sẽ không thấy, cần fix
     return score
 
-file_name = "D:\Learning Stuff\AI\Project Pacman\Pacman_map_lv1_1.txt"
+file_name = "C:/Users/ASUS/Documents/HCMUS/2nd/S3/AI/Bài tập/Proj/Pacman Map/Pacman_map_lv2_3.txt"
 
 size = []
 matrix = []
 
 size = read_file(file_name, matrix)
 
-weight = int(size[0][0])
+width = int(size[0][0])
 height = int(size[0][1])
 
 spawn = matrix.pop()
 
-dict = add_adjacent(matrix, weight, height)
-
-score = lv3(matrix, dict, spawn, weight, height)
-print(score)
+adjacent = add_adjacent(matrix, width, height)
+monsters_location = get_monsters_location(matrix, width, height)
+score = lv3(matrix, adjacent, monsters_location, spawn, width, height)
