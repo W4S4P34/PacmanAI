@@ -140,18 +140,26 @@ def lv3(matrix, dict, spawn, width, height):
                     step[n][m] = sum(1 for v in value if v)
             total += step[n][m]
 
+    number_adj_list = []
+    number_adj_list = step
+
     step[i][j] -= 1 #Điểm spawn giảm sẫn 1 bước đi
 
     pre_path = []   #path này dùng để lưu đường đi khi có thức ăn
     have_2 = False  #Check xem đã thấy thức ăn chưa, nếu đẵ thấy thức ăn thì đi theo path, chi đổi hướng khi thấy thức ăn khác gần hơn
 
+    
+    pre_position = (i, j)
+    
+    count_2_step = 0
+    
     for each_node_step in range(total):
-        
         if matrix[i][j] == 2:   #Check xem chạm thức ăn chưa, nếu rồi thì thức ăn biến mất, xóa path và reset have_2
             score += 20
             matrix[i][j] = 0
             pre_path.clear()
             have_2 = False
+            count_2_step = 0
 
         list_zone = []  #Tạo zone, vùng nhìn thấy của pacman, các elements trong zone là tuple tọa độ của caca1 node
         for n in range(-4, 4):
@@ -170,42 +178,45 @@ def lv3(matrix, dict, spawn, width, height):
                     continue
                 have_2 = True
                 pre_path = path
+                tuple = pre_path.pop(0)
+                step[tuple[0]][tuple[1]] += 1
 
 
         
         if have_2 == True:  #Đi theo path khi có thức ăn
-            tuple = pre_path.pop(1)
+            tuple = pre_path.pop(0)
+            count_2_step += 1
             i = tuple[0]
-            j = tuple[1]
-            step[i][j] -= 1
+            j = tuple[1]            
+            if count_2_step > 1:
+                step[i][j] -= 1
             score -= 1
             continue
         else:   #Tìm đường theo một thừ tự nhất định khi không có thức ăn trong zone theo thứ tự node là phải, dưới, trên, trái
             for key in keys:
                 if (i, j) == key:
-                    if (i, j + 1) in values and step[i][j + 1] > 0:
+                    if (i, j + 1) in values and step[i][j + 1] > 0 and (i, j + 1) != pre_position:
                         step[i][j + 1] -= 1
+                        pre_position = (i, j)
                         j += 1
                         score -= 1
                         break
-                    if (i + 1, j) in values and step[i + 1][j] > 0:
+                    if (i + 1, j) in values and step[i + 1][j] > 0  and (i + 1, j) != pre_position:
                         step[i + 1][j] -= 1
+                        pre_position = (i, j)
                         i += 1
-                        if step[i][j] == 1 and (i, j - 1) in values and (i + 1, j + 1) not in values and (i - 1, j + 1) not in values and (i - 1, j - 1) not in values and (i + 1, j - 1) not in values:
-                                step[i][j] -= 1
-                                step[i][j - 1] -= 1
                         score -= 1
                         break
                     if (i - 1, j) in values and step[i - 1][j] > 0:
                         step[i - 1][j] -= 1
+                        pre_position = (i, j)
                         i -= 1                                                             
                         score -= 1
                         break
                     if (i, j - 1) in values and step[i][j - 1] > 0:
                         step[i][j - 1] -= 1
+                        pre_position = (i, j)
                         j -= 1
-                        if  step[i][j] > 1 and (i, j - 1) in values and (i, j + 1) in values and (i + 1, j) not in values and (i - 1, j) not in values:
-                            step[i][j] -= 1
                         score -= 1
                         break
                 #Còn trục trặc khi pacman đi lùi, nếu các thức ăn quá xa nhau có thể sẽ k thấy, cần fix
