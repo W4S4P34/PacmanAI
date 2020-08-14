@@ -1,4 +1,6 @@
-from path_finding import A_star
+from path_finding import A_star, manhattan_distance
+import handle_input as handlein
+
 
 def lv3(matrix, dict, spawn, width, height):
 
@@ -28,28 +30,27 @@ def lv3(matrix, dict, spawn, width, height):
                 if matrix[i + n][j + m] != 1 and matrix[i + n][j + m] != 3:
                     list_zone.append((i + n, j + m))
 
-        zone_with_adj = add_add_adjacent(list_zone, 7, 7)
+        zone_with_adj = handlein.handle_adjacent(list_zone, (7, 7))
 
-		list_food_heuristic = []
+        list_food_heuristic = []
 
         have_2 = False
         for k in list_zone:
             if matrix[k[0]][k[1]] == 2:
-                #Add heuristic to find the shortest food and count the score
+                #Add heuristic to find the shortest from current position to food and count the score
                 temp = manhattan_distance((i, j), k)
                 list_food_heuristic.append((temp, k))
+                print("Help")
                 have_2 = True
                 i = k[0]
                 j = k[1]
-        
-        if min(list_food_heuristic[0]):
-#			A_star(zone, adjacent_nodes, current_pos, list_food_heuristic[1])
-			pass
 
         if have_2 == True:
-			continue
-		else:
-			for key in dict.keys():
+            if min(list_food_heuristic)[0]:
+                path = A_star(zone_with_adj, (i, j), (list_food_heuristic)[1])  # Calculate the shortest path to min food.
+            continue
+        else:
+            for key in dict.keys():
                 if (i, j) == key:
                     if (i, j + 1) in dict.values() and step[i][j + 1] > 0:
                         j += 1
@@ -62,7 +63,7 @@ def lv3(matrix, dict, spawn, width, height):
                         score -= 1
                         break
                     if (i - 1, j) in dict.values() and step[i - 1][j] > 0:
-                        j -= 1                                                             
+                        j -= 1
                         step[i][j] -= 1
                         score -= 1
                         break
@@ -71,5 +72,5 @@ def lv3(matrix, dict, spawn, width, height):
                         step[i][j] -= 1
                         score -= 1
                         break
-                
+
     return score
