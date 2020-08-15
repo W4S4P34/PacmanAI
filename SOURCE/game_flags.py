@@ -15,9 +15,10 @@ LVL2 = 'Level_2'
 LVL3 = 'Level_3'
 LVL4 = 'Level_4'
 MAPNO1 = 2
-MAPNO2 = 3
+MAPNO2 = 4
 MAPNO3 = 0
 MAPNO4 = 0
+SCORE = 20
 
 # Map renders
 # ASSET settings
@@ -31,11 +32,15 @@ MAPBG = 'map-background.png'
 
 # Character settings and flags
 CHARACTER_TYPE = 'Character'
-MAIN_CHARACTER = 'pacman_02.png'
+MAIN_CHARACTER_RIGHT = ['pacman_01.png', 'pacman_02.png']
+MAIN_CHARACTER_LEFT = ['pacman_04.png', 'pacman_05.png']
+MAIN_CHARACTER_UP = ['pacman_06.png', 'pacman_07.png']
+MAIN_CHARACTER_DOWN = ['pacman_08.png', 'pacman_09.png']
 
 # Food setting and flags
 FOOD_TYPE = 'Food'
-FOOD = 'food_04.png'
+FOOD = ['food_04_01.png', 'food_04_02.png', 'food_04_03.png', 'food_04_04.png',
+        'food_04_05.png', 'food_04_06.png', 'food_04_07.png', 'food_04_08.png']
 
 # Maze settings and flags
 MAZE_TYPE = 'Maze'

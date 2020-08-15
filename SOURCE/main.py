@@ -15,6 +15,7 @@ class Game:
         self.icon = pg.display.set_icon(pacmanicon)
         """Clock to manage FPS of the game"""
         self.clock = pg.time.Clock()
+        self.deltatime = 0
         """Scenes"""
         self.current_scene = scene.TitleScene(self.screen)
 
@@ -44,13 +45,13 @@ class Game:
 
             self.current_scene.ProcessInput(filtered_events, pressed_keys)
             if self.current_scene == self.current_scene.next:
-                self.current_scene.Update()
+                self.current_scene.Update(self.deltatime)
                 self.current_scene.Render()
             else:
                 self.current_scene = self.current_scene.next
 
             pg.display.flip()
-            self.clock.tick(fps)
+            self.deltatime = self.clock.tick(60) / 1000
 
 
 ###################################################################
