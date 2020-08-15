@@ -5,6 +5,7 @@ from Object import button
 from Object import text
 from Object import pacman
 from Object import food
+from Object import monster_easy as monsterE
 from Object import maze_drawer as drawer
 from Level_1 import path_finding as find_lvl_1
 import pygame as pg
@@ -251,7 +252,7 @@ class LevelOne(SceneBase):
         # Handle drawing
         # Get information about the maze
         self.size, self.maze, pacmanpos = input.read_file(self.level, self.map)
-        self.adjacents, foodpos = input.handle_adjacent(self.maze, self.size)
+        self.adjacents, foodpos = input.handle_adjacent_1(self.maze, self.size)
         # Resize window
         width, height = self.size
         width *= 32
@@ -456,7 +457,7 @@ class LevelTwo(SceneBase):
         # Handle drawing
         # Get information about the maze
         self.size, self.maze, pacmanpos = input.read_file(self.level, self.map)
-        self.adjacents, foodpos = input.handle_adjacent(self.maze, self.size)
+        self.adjacents, foodpos, monsters = input.handle_adjacent_2(self.maze, self.size)
         # Resize window
         width, height = self.size
         width *= 32
@@ -471,11 +472,18 @@ class LevelTwo(SceneBase):
         self.pacman_sprite = pg.sprite.Group(self.pacman)
         self.food = food.Food(foodpos)
         self.all_sprites = pg.sprite.Group(self.food)
+        # Monsters
+        self.monsters = []
+        for monster in monsters:
+            self.monsters.append(monsterE.MonsterEasy(monster))
+        self.monsters_sprite = pg.sprite.Group()
+        for monster in self.monsters:
+            self.monsters_sprite.add(monster)
         self.path = find_lvl_1.A_star(self.maze, self.adjacents,
                                       self.pacman.pos, self.food.pos)
 
-        if len(self.path) > flags.SCORE:
-            self.path = None
+        # if len(self.path) > flags.SCORE:
+        #     self.path = None
         if self.path:
             self.dest_node = self.path.pop(0)
         else:
@@ -536,6 +544,7 @@ class LevelTwo(SceneBase):
         # Playing
         elif self.state == flags.PLAYING:
             self.all_sprites.update(deltatime)
+            self.monsters_sprite.update(deltatime)
             self.countdown_timer -= deltatime
             if self.countdown_timer <= 0:
                 self.ready_flag = False
@@ -583,7 +592,10 @@ class LevelTwo(SceneBase):
             """Animation"""
             self.screen.blit(self.food_icon_censor, self.food_icon_censor_rect)
             self.screen.blit(self.background, self.food.rect, self.food.rect)
+            for monster in self.monsters:
+                self.screen.blit(self.background, monster.rect, monster.rect)
             self.all_sprites.draw(self.screen)
+            self.monsters_sprite.draw(self.screen)
             self.pacman_sprite.draw(self.screen)
         elif self.state == flags.PLAYING:
             """Status bar"""
@@ -610,7 +622,10 @@ class LevelTwo(SceneBase):
             self.screen.blit(self.background, self.pacman.rect, self.pacman.rect)
             self.screen.blit(self.food_icon_censor, self.food_icon_censor_rect)
             self.screen.blit(self.background, self.food.rect, self.food.rect)
+            for monster in self.monsters:
+                self.screen.blit(self.background, monster.rect, monster.rect)
             self.all_sprites.draw(self.screen)
+            self.monsters_sprite.draw(self.screen)
             self.pacman_sprite.draw(self.screen)
         elif self.state == flags.WINNING:
             """Status bar"""
@@ -628,8 +643,11 @@ class LevelTwo(SceneBase):
             """Animation"""
             self.screen.blit(self.background, self.pacman.rect, self.pacman.rect)
             self.screen.blit(self.food_icon_censor, self.food_icon_censor_rect)
+            for monster in self.monsters:
+                self.screen.blit(self.background, monster.rect, monster.rect)
             self.all_sprites.draw(self.screen)
             self.screen.blit(self.background, self.food.rect, self.food.rect)
+            self.monsters_sprite.draw(self.screen)
             self.pacman_sprite.draw(self.screen)
         elif self.state == flags.SURRENDER:
             """Status bar"""
@@ -648,7 +666,10 @@ class LevelTwo(SceneBase):
             self.screen.blit(self.background, self.pacman.rect, self.pacman.rect)
             self.screen.blit(self.food_icon_censor, self.food_icon_censor_rect)
             self.screen.blit(self.background, self.food.rect, self.food.rect)
+            for monster in self.monsters:
+                self.screen.blit(self.background, monster.rect, monster.rect)
             self.all_sprites.draw(self.screen)
+            self.monsters_sprite.draw(self.screen)
             self.pacman_sprite.draw(self.screen)
 
 
