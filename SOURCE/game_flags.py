@@ -1,18 +1,23 @@
 # Game states
 INTRO = 'intro'
-SETTINGS = 'settings'
+LVLSELECT = 'levelselecting'
 MAPSELECT = 'mapselecting'
+HOLD = 'hold'
 PLAYING = 'playing'
 WINNING = 'winning'
+SURRENDER = 'surrender'
 GAMEOVER = 'gameover'
 
 # Level gameplay
 INP = 'INPUT'
 LVL1 = 'Level_1'
 LVL2 = 'Level_2'
-MAP1 = 'Map-1.txt'
-MAP2 = 'Map-2.txt'
-MAP3 = 'Map-3.txt'
+LVL3 = 'Level_3'
+LVL4 = 'Level_4'
+MAPNO1 = 2
+MAPNO2 = 3
+MAPNO3 = 0
+MAPNO4 = 0
 
 # Map renders
 # ASSET settings

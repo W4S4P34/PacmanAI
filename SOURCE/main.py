@@ -16,7 +16,7 @@ class Game:
         """Clock to manage FPS of the game"""
         self.clock = pg.time.Clock()
         """Scenes"""
-        self.current_scene = scene.TitleScene()
+        self.current_scene = scene.TitleScene(self.screen)
 
     def on_execute(self, fps):
         pg.init()
@@ -43,10 +43,11 @@ class Game:
                     filtered_events.append(event)
 
             self.current_scene.ProcessInput(filtered_events, pressed_keys)
-            self.current_scene.Update()
-            self.current_scene.Render(self.screen)
-
-            self.current_scene = self.current_scene.next
+            if self.current_scene == self.current_scene.next:
+                self.current_scene.Update()
+                self.current_scene.Render()
+            else:
+                self.current_scene = self.current_scene.next
 
             pg.display.flip()
             self.clock.tick(fps)

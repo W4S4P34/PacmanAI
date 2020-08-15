@@ -4,12 +4,12 @@ import pygame as pg
 
 
 class MazeDrawer:
-    def __init__(self, maze=None, size=None, background=None, background_rect=None):
+    def __init__(self, maze=None, size=None):
         # Information
         self.maze = maze
         self.size = size
-        self.background = background
-        self.background_rect = background_rect
+        self.background = None
+        self.background_rect = None
 
     # Get rid of food or monsters
     def flatten_maze(self, maze, size):
@@ -344,3 +344,5 @@ class MazeDrawer:
             for col_idx in range(width):
                 border_pos = self.check_border((row_idx, col_idx), self.size)
                 self.draw_cell(flatmaze, (row_idx, col_idx), border_pos)
+
+        return self.background, self.background_rect
