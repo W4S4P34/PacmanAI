@@ -261,6 +261,13 @@ def lv4(matrix, dict, spawn, width, height):
 			monster_list.pop(0)
 		for monster in monster_list:
 			matrix[monster[0]][monster[1]] = 3
+		
+		#In ra mazae sau khi pacman và quái vật di chuyển xong lượt
+		for n in range(height):
+            for m in range(width):
+				print(maze[n][m], end = " ")
+			print(end = "\n")	
+			
 		#Fix adjacent
 		temp_dict.clear()
         temp_dict = add_adjacent(matrix, width, height)
