@@ -37,11 +37,16 @@ MAIN_CHARACTER_RIGHT = ['pacman_01.png', 'pacman_02.png']
 MAIN_CHARACTER_LEFT = ['pacman_04.png', 'pacman_05.png']
 MAIN_CHARACTER_UP = ['pacman_06.png', 'pacman_07.png']
 MAIN_CHARACTER_DOWN = ['pacman_08.png', 'pacman_09.png']
+MAIN_CHARACTER_DISAPPEARED = ['pacman_03.png', 'pacman_07.png', 'pacman_10.png', 'pacman_11.png', 'pacman_12.png',
+                              'pacman_13.png', 'pacman_14.png', 'pacman_15.png', 'pacman_16.png', 'pacman_17.png',
+                              'pacman_18.png', 'pacman_19.png', 'pacman_20.png']
 
 # Monter
 # Level 2
 MONSTER_RED = ['monster_red_01.png', 'monster_red_02.png', 'monster_red_03.png', 'monster_red_04.png',
                'monster_red_05.png', 'monster_red_06.png', 'monster_red_07.png', 'monster_red_08.png']
+MONSTER_RETRIEVE = ['monster_retrieve_01.png', 'monster_retrieve_02.png',
+                    'monster_retrieve_03.png', 'monster_retrieve_04.png']
 # Food setting and flags
 FOOD_TYPE = 'Food'
 FOOD = ['food_04_01.png', 'food_04_02.png', 'food_04_03.png', 'food_04_04.png',

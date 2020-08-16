@@ -1,20 +1,18 @@
 import handle_input as input
-# import game_settings as settings
 import game_flags as flags
 import pygame as pg
 
 
 class Pacman(pg.sprite.Sprite):
     # Constructor
-    def __init__(self, pos=None):
+    def __init__(self, pos=(-1, -1)):
         # Call the parent class (Sprite) constructor
         pg.sprite.Sprite.__init__(self)
         size = (32, 32)
-
         self.pos = pos
         position = tuple([ele * 32 for ele in reversed(self.pos)])
-
         self.rect = pg.Rect(position, size)
+
         self.images_right = []
         for char_img in flags.MAIN_CHARACTER_RIGHT:
             img, _ = input.load_image(flags.CHARACTER_TYPE, char_img)
@@ -37,6 +35,11 @@ class Pacman(pg.sprite.Sprite):
             img, _ = input.load_image(flags.CHARACTER_TYPE, char_img)
             self.images_down.append(img)
 
+        self.images_disappear = []
+        for char_img in flags.MAIN_CHARACTER_DISAPPEARED:
+            img, _ = input.load_image(flags.CHARACTER_TYPE, char_img)
+            self.images_disappear.append(img)
+
         self.index = 0
         self.image = self.images[self.index]
 
@@ -56,15 +59,18 @@ class Pacman(pg.sprite.Sprite):
         Args:
             dt: Time elapsed between each frame.
         """
-        if self.x_axis > 0:
-            self.images = self.images_right
-        elif self.x_axis < 0:
-            self.images = self.images_left
+        if self.x_axis is None and self.y_axis is None:
+            self.images = self.images_disappear
+        else:
+            if self.x_axis > 0:
+                self.images = self.images_right
+            elif self.x_axis < 0:
+                self.images = self.images_left
 
-        if self.y_axis > 0:
-            self.images = self.images_down
-        elif self.y_axis < 0:
-            self.images = self.images_up
+            if self.y_axis > 0:
+                self.images = self.images_down
+            elif self.y_axis < 0:
+                self.images = self.images_up
 
         self.current_time += dt
         if self.current_time >= self.animation_time:
@@ -76,15 +82,18 @@ class Pacman(pg.sprite.Sprite):
         """
         Updates the image of Sprite every 6 frame (approximately every 0.1 second if frame rate is 60).
         """
-        if self.x_axis > 0:
-            self.images = self.images_right
-        elif self.x_axis < 0:
-            self.images = self.images_left
+        if self.x_axis is None and self.y_axis is None:
+            self.images = self.images_disappear
+        else:
+            if self.x_axis > 0:
+                self.images = self.images_right
+            elif self.x_axis < 0:
+                self.images = self.images_left
 
-        if self.y_axis > 0:
-            self.images = self.images_down
-        elif self.y_axis < 0:
-            self.images = self.images_up
+            if self.y_axis > 0:
+                self.images = self.images_down
+            elif self.y_axis < 0:
+                self.images = self.images_up
 
         self.current_frame += 1
         if self.current_frame >= self.animation_frames:

@@ -3,7 +3,7 @@ import game_flags as flags
 import pygame as pg
 
 
-class Food(pg.sprite.Sprite):
+class MonsterFx(pg.sprite.Sprite):
     # Constructor
     def __init__(self, pos=(-1, -1)):
         # Call the parent class (Sprite) constructor
@@ -14,8 +14,8 @@ class Food(pg.sprite.Sprite):
         self.rect = pg.Rect(position, size)
 
         self.images = []
-        for food_img in flags.FOOD:
-            img, _ = input.load_image(flags.FOOD_TYPE, food_img)
+        for monster_img in flags.MONSTER_RETRIEVE:
+            img, _ = input.load_image(flags.CHARACTER_TYPE, monster_img)
             self.images.append(img)
 
         self.index = 0

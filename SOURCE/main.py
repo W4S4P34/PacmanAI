@@ -46,6 +46,7 @@ class Game:
             self.current_scene.ProcessInput(filtered_events, pressed_keys)
             if self.current_scene == self.current_scene.next:
                 self.current_scene.Update(self.deltatime)
+            if self.current_scene == self.current_scene.next:
                 self.current_scene.Render()
             else:
                 self.current_scene = self.current_scene.next

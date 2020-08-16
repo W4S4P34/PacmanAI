@@ -1,20 +1,18 @@
 import handle_input as input
-# import game_settings as settings
 import game_flags as flags
 import pygame as pg
 
 
 class MonsterEasy(pg.sprite.Sprite):
     # Constructor
-    def __init__(self, pos=None):
+    def __init__(self, pos=(-1, -1)):
         # Call the parent class (Sprite) constructor
         pg.sprite.Sprite.__init__(self)
         size = (32, 32)
-
         self.pos = pos
         position = tuple([ele * 32 for ele in reversed(self.pos)])
-
         self.rect = pg.Rect(position, size)
+
         self.images = []
         for monster_img in flags.MONSTER_RED:
             img, _ = input.load_image(flags.CHARACTER_TYPE, monster_img)
