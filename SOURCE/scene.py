@@ -43,6 +43,9 @@ class TitleScene(SceneBase):
         # Buttons
         self.play_button = button.Button(flags.BUTTONBG)
         self.play_button.rect = self.play_button.rect.move(245, 250)
+
+        self.exit_button = button.Button(flags.BUTTONBG)
+        self.exit_button.rect = self.exit_button.rect.move(245, 300)
         # Texts
         pg.font.init()
         path = os.path.join(settings.PATH, 'ASSET', 'Fonts', 'Fipps-Regular.otf')
@@ -55,6 +58,10 @@ class TitleScene(SceneBase):
         play_font = pg.font.Font(path, 15)
         self.play_text = text.Text('Play', play_font, (255, 255, 255))
         self.play_text.text_rect.center = self.play_button.rect.center
+
+        exit_font = pg.font.Font(path, 15)
+        self.exit_text = text.Text('Exit', exit_font, (255, 255, 255))
+        self.exit_text.text_rect.center = self.exit_button.rect.center
         # State
         self.state = flags.INTRO
 
@@ -65,17 +72,22 @@ class TitleScene(SceneBase):
                     self.state = flags.LVLSELECT
                     self.SwitchToScene(LevelSettings(self.screen))
                     self.play_button.is_over = False
+                if self.exit_button.rect.collidepoint(pg.mouse.get_pos()):
+                    self.Terminate()
 
     def Update(self, deltatime):
         ##################################################################################
         # Collisions
         # Checks if mouse position is over the button
         self.play_button.switch()
+        self.exit_button.switch()
         ##################################################################################
 
     def Render(self):
         self.screen.blit(self.play_button.image, self.play_button.rect)
         self.screen.blit(self.play_text.text, self.play_text.text_rect)
+        self.screen.blit(self.exit_button.image, self.exit_button.rect)
+        self.screen.blit(self.exit_text.text, self.exit_text.text_rect)
 
 
 class LevelSettings(SceneBase):
