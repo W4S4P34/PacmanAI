@@ -108,13 +108,12 @@ def lv4(matrix, dict, spawn, width, height):
 
     i = spawn[0]    #Lưu spawn thành 2 điểm
     j = spawn[1]
-	
-	temp_dict = {}
-	temp_dict = dict
+
+    temp_dict = {}
+    temp_dict = dict
 
     #Mục tiêu là đi nhiều nhất để tìm đồ ăn nên sẽ có điểm âm hơi lớn
     #Mỗi một node sẽ có một số lần đi qua nhất định để tránh việc đi lại nhiều lần, dồng thời cũng làm cho việc đi lùi khó khăn, duyệt không hết map
-    #Chưa xử lý được cách né khi thấy quái
 
     score = 0   #Điểm ban đầu là 0
 
@@ -144,6 +143,12 @@ def lv4(matrix, dict, spawn, width, height):
     
     count_2_step = 0
 
+    #In maze:
+    matrix[i][j] = 6 #Cho pacman = 6 đỡ
+    for n in range(height):
+        for m in range(width):
+            print(matrix[i][j], end = " ")
+        print(end = "\n")
     
     for each_node_step in range(total):
         if matrix[i][j] == 2:   #Check xem chạm thức ăn chưa, nếu rồi thì thức ăn biến mất, xóa path và reset have_2
@@ -152,41 +157,46 @@ def lv4(matrix, dict, spawn, width, height):
             pre_path.clear()
             have_2 = False
             count_2_step = 0
-		
-	    #Lấy ra danh sách vị trí quái vật
-	    monster_list = []
-	    for n in range(0, height):
-	        for m in range(0, width):
-	            if matrix[n][m] == 3:
-	                monster_list.append((n, m))
-					
-		number_of_monsters = len(monster_list)
+
+        #Để clearscreen ở đây
+        
+        #Lấy ra danh sách vị trí quái vật
+        monster_list = []
+        for n in range(0, height):
+            for m in range(0, width):
+                if matrix[n][m] == 3:
+                    monster_list.append((n, m))
+
+        number_of_monsters = len(monster_list)  #Để tí nữa xóa vị trí cũa của monster trong monster_list
 
         #Quái di chuyển bằng Heuristic tìm pacman
         for monster in monster_list:
             monster_path = []
-            monster_path = A_star(matrix, temp_dict, (monster[0], monster[1]), (i, j))
+            monster_path = BFS(matrix, dict, (i, j), (monster[0], monster[1]))
             monster_tuple = monster_path.pop(1)
             matrix[monster[0]][monster[1]] = 0
-            matrix[monster_tuple[0]][monster_tuple[1]] = 1
-			monster_list.append(monster_tuple[0], monster_tuple[1])
-		
-		temp_dict.clear()
-        temp_dict = add_adjacent(matrix, width, height)
-		
-		#Tạo danh sách các node có adj, values là số lượng adj
-		number_adj_list = []
-		for n in range(0, height):
-	        temp = []
-	        for m in range(0, width):
-	            temp.append(0)
-	        number_adj_list.append(temp)
-			
-		for n in range(0, height):
-	        for m in range(0, width):
-	            for key, value in temp_dict.items():
-	                if n == key[0] and m == key[1]:
-	                    number_adj_list[n][m] = sum(1 for v in value if v)
+            if matrix[monster_tuple[0]][monster_tuple[1]] == 6:
+                print("The monster killed pacman\n")
+                return score
+            matrix[monster_tuple[0]][monster_tuple[1]] = 1 #Cho quái như tường để pacman né
+            monster_list.append(monster_tuple[0], monster_tuple[1]) #Lưu các vị trí mới của các monster vào list
+
+        temp_dict.clear()
+        temp_dict = add_adjacent(matrix, width, height) #Đổi danh sách adj vì quái di chuyển
+
+        #Tạo danh sách các node có adj, values là số lượng adj
+        number_adj_list = []
+        for n in range(0, height):
+            temp =[]
+            for m in range(0, width):
+                temp.append(0)
+            number_adj_list.append(temp)
+
+        for n in range(0, height):
+            for m in range(0, width):
+                for key, value in temp_dict.items():
+                    if n == key[0] and m == key[1]:
+                        number_adj_list[n][m] = sum(1 for v in value if v)
 
         #Tạo list các key và list các values của dictionary
         keys = []
@@ -209,7 +219,7 @@ def lv4(matrix, dict, spawn, width, height):
         for k in list_zone:
             path = []
             if matrix[k[0]][k[1]] == 2:
-                path = A_star(matrix, temp_dict, (i, j), (k[0], k[1]))
+                path = A_star(matrix, dict, (i, j), (k[0], k[1]))
                 if len(pre_path) < len(path) and len(pre_path) != 0:
                     continue
                 have_2 = True
@@ -228,51 +238,58 @@ def lv4(matrix, dict, spawn, width, height):
                 step[i][j] -= 1
             score -= 1
             continue
-        else:   #Tìm đường theo một thừ tự nhất định khi không có thức ăn trong zone theo thứ tự node là phải, dưới, trên, trái
+        else:   #Tìm đường theo một thứ tự nhất định khi không có thức ăn trong zone theo thứ tự node là phải, dưới, trên, trái
             for key in keys:
                 if (i, j) == key:
-                    if (i, j + 1) in values and step[i][j + 1] > 0 and ((i, j + 1) != pre_position or number_adjacent_list[i][j] == 1):
+                    if (i, j + 1) in values and step[i][j + 1] > 0 and ((i, j + 1) != pre_position or number_adj_list[i][j] == 1):
                         step[i][j + 1] -= 1
                         pre_position = (i, j)
+                        matrix[i][j] = 0 #Sau khi pacman rời đi thì vị trí đó thành đường
                         j += 1
+                        matrix[i][j] = 6 #Vị trí hiện tại
                         score -= 1
                         break
-                    if (i + 1, j) in values and step[i + 1][j] > 0  and ((i + 1, j) != pre_position or number_adjacent_list[i][j] == 1):
+                    if (i + 1, j) in values and step[i + 1][j] > 0  and ((i + 1, j) != pre_position or number_adj_list[i][j] == 1):
                         step[i + 1][j] -= 1
                         pre_position = (i, j)
+                        matrix[i][j] = 0
                         i += 1
+                        matrix[i][j] = 6
                         score -= 1
                         break
                     if (i - 1, j) in values and step[i - 1][j] > 0:
                         step[i - 1][j] -= 1
                         pre_position = (i, j)
-                        i -= 1                                                             
+                        matrix[i][j] = 0
+                        i -= 1            
+                        matrix[i][j] = 6
                         score -= 1
                         break
                     if (i, j - 1) in values and step[i][j - 1] > 0:
                         step[i][j - 1] -= 1
                         pre_position = (i, j)
+                        matrix[i][j] = 0
                         j -= 1
+                        matrix[i][j] = 6
                         score -= 1
                         break
-						
-		#Trả quái về 3
-		for number in range(number_of_monsters):
-			monster_list.pop(0)
-		for monster in monster_list:
-			matrix[monster[0]][monster[1]] = 3
-		
-		#In ra mazae sau khi pacman và quái vật di chuyển xong lượt
-		for n in range(height):
+               
+        #Trả quái về 3
+        for number in range(number_of_monsters):
+            monster_list.pop(0)
+        for monster in monster_list:
+            matrix[monster[0]][monster[1]] = 3
+
+        #In ra maze sau khi quái và pacman di chuyển
+        for n in range(height):
             for m in range(width):
-				print(maze[n][m], end = " ")
-			print(end = "\n")	
-			
-		#Fix adjacent
-		temp_dict.clear()
+                print(matrix[i][j], end = " ")
+            print(end = "\n")
+
+        #Đưa adjacent về như cũ, vì lúc trên biến quái thành tường đã xóa các adjacent của quái
+        temp_dict.clear()
         temp_dict = add_adjacent(matrix, width, height)
 
-    print((i, j))
     return score
 
 file_name = "D:\Learning Stuff\AI\Project Pacman\Pacman_map_lv1_1.txt"
