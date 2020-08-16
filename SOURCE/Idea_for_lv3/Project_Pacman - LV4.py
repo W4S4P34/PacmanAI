@@ -90,15 +90,15 @@ def add_adjacent(matrix, weight, height):
     for i in range(1, height - 1):
         for j in range(1, weight - 1):
             temp = []
-            if matrix[i][j] == 1 or matrix[i][j] == 3:
+            if matrix[i][j] == 1:
                 continue
-            if matrix[i - 1][j] != 1 or matrix[i - 1][j] == 3:
+            if matrix[i - 1][j] != 1:
                 temp.append((i - 1, j))
-            if matrix[i + 1][j] != 1 or matrix[i + 1][j] == 3:
+            if matrix[i + 1][j] != 1:
                 temp.append((i + 1, j))
-            if matrix[i][j - 1] != 1 or matrix[i][j - 1] == 3:
+            if matrix[i][j - 1] != 1:
                 temp.append((i, j - 1))
-            if matrix[i][j + 1] != 1 or matrix[i][j + 1] == 3:
+            if matrix[i][j + 1] != 1:
                 temp.append((i, j + 1))
             dict[(i, j)] = temp
 
@@ -144,12 +144,6 @@ def lv4(matrix, dict, spawn, width, height):
     
     count_2_step = 0
 
-    #Lấy ra danh sách vị trí quái vật
-    monster_list = []
-    for n in range(0, height):
-        for m in range(0, width):
-            if matrix[n][m] == 3:
-                monster_list.append((n, m))
     
     for each_node_step in range(total):
         if matrix[i][j] == 2:   #Check xem chạm thức ăn chưa, nếu rồi thì thức ăn biến mất, xóa path và reset have_2
@@ -158,6 +152,15 @@ def lv4(matrix, dict, spawn, width, height):
             pre_path.clear()
             have_2 = False
             count_2_step = 0
+		
+	    #Lấy ra danh sách vị trí quái vật
+	    monster_list = []
+	    for n in range(0, height):
+	        for m in range(0, width):
+	            if matrix[n][m] == 3:
+	                monster_list.append((n, m))
+					
+		number_of_monsters = len(monster_list)
 
         #Quái di chuyển bằng Heuristic tìm pacman
         for monster in monster_list:
@@ -165,7 +168,8 @@ def lv4(matrix, dict, spawn, width, height):
             monster_path = A_star(matrix, temp_dict, (monster[0], monster[1]), (i, j))
             monster_tuple = monster_path.pop(1)
             matrix[monster[0]][monster[1]] = 0
-            matrix[monster_tuple[0]][monster_tuple[1]] = 3
+            matrix[monster_tuple[0]][monster_tuple[1]] = 1
+			monster_list.append(monster_tuple[0], monster_tuple[1])
 		
 		temp_dict.clear()
         temp_dict = add_adjacent(matrix, width, height)
@@ -251,6 +255,15 @@ def lv4(matrix, dict, spawn, width, height):
                         j -= 1
                         score -= 1
                         break
+						
+		#Trả quái về 3
+		for number in range(number_of_monsters):
+			monster_list.pop(0)
+		for monster in monster_list:
+			matrix[monster[0]][monster[1]] = 3
+		#Fix adjacent
+		temp_dict.clear()
+        temp_dict = add_adjacent(matrix, width, height)
 
     print((i, j))
     return score
