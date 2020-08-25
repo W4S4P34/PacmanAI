@@ -14,10 +14,10 @@ LVL1 = 'Level_1'
 LVL2 = 'Level_2'
 LVL3 = 'Level_3'
 LVL4 = 'Level_4'
-MAPNO1 = 2
+MAPNO1 = 5
 MAPNO2 = 4
-MAPNO3 = 0
-MAPNO4 = 0
+MAPNO3 = 1
+MAPNO4 = 1
 SCORE = 20
 
 # Map renders
