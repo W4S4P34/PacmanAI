@@ -52,7 +52,7 @@ class Game:
                 self.current_scene = self.current_scene.next
 
             pg.display.flip()
-            self.deltatime = self.clock.tick(60) / 1000
+            self.deltatime = self.clock.tick(fps) / 1000
 
 
 ###################################################################
